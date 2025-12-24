@@ -11,7 +11,7 @@ mock_openai_module.OpenAI.return_value = mock_client
 sys.modules['openai'] = mock_openai_module
 
 # 现在导入需要测试的函数
-from services.socratic_hint import generate_socratic_hint
+from services.hint.socratic_hint import generate_socratic_hint
 
 
 def test_generate_socratic_hint_basic_cases():
@@ -101,6 +101,49 @@ def test_generate_socratic_hint_multiple_keywords():
     # 多个关键词，应该匹配第一个出现的规则
     assert generate_socratic_hint("设未知数x，然后移项") == "你为什么选择这个变量？是否有更简洁的设定方式？"
     assert generate_socratic_hint("解方程，然后计算结果") == "你用了什么方法解方程？是否有更简便的方法？"
+
+
+def test_generate_socratic_hint_middle_school_cases():
+    """测试初中各阶段数学题的提示生成"""
+    # 初一数学 - 有理数运算
+    assert generate_socratic_hint("计算") == "你确定计算过程正确吗？可以再检查一遍吗？"
+    assert generate_socratic_hint("算") == "你确定计算过程正确吗？可以再检查一遍吗？"
+    
+    # 初一数学 - 一元一次方程
+    assert generate_socratic_hint("移项") == "移项时是否考虑了符号变化？"
+    assert generate_socratic_hint("解方程") == "你用了什么方法解方程？是否有更简便的方法？"
+    assert generate_socratic_hint("设未知数") == "你为什么选择这个变量？是否有更简洁的设定方式？"
+    
+    # 初二数学 - 二元一次方程组
+    assert generate_socratic_hint("解方程") == "你用了什么方法解方程？是否有更简便的方法？"
+    
+    # 初二数学 - 三角形全等
+    assert generate_socratic_hint("全等") == "你是如何证明相似/全等的？是否符合相应的判定定理？"
+    assert generate_socratic_hint("相似") == "你是如何证明相似/全等的？是否符合相应的判定定理？"
+    
+    # 初二数学 - 分式方程
+    assert generate_socratic_hint("解方程") == "你用了什么方法解方程？是否有更简便的方法？"
+    assert generate_socratic_hint("检验") == "你是如何验证解的正确性的？是否考虑了所有可能的解？"
+    
+    # 初三数学 - 一元二次方程
+    assert generate_socratic_hint("用配方法解方程") == "配方过程中是否注意了常数项的处理？"
+    assert generate_socratic_hint("因式分解") == "你用了什么因式分解方法？是否有其他分解方式？"
+    
+    # 初三数学 - 函数
+    assert generate_socratic_hint("函数") == "这个函数的定义域和值域是什么？图像有什么特征？"
+    assert generate_socratic_hint("图像") == "这个函数的定义域和值域是什么？图像有什么特征？"
+    
+    # 初三数学 - 几何
+    assert generate_socratic_hint("面积") == "你使用了什么面积/体积公式？是否适用于当前图形？"
+    assert generate_socratic_hint("体积") == "你使用了什么面积/体积公式？是否适用于当前图形？"
+    assert generate_socratic_hint("勾股定理") == "你确定这个三角形是直角三角形吗？有没有其他方法可以验证？"
+    
+    # 初三数学 - 不等式
+    assert generate_socratic_hint("不等式") == "解不等式时是否注意了不等号的方向变化？"
+    
+    # 通用操作
+    assert generate_socratic_hint("计算") == "你确定计算过程正确吗？可以再检查一遍吗？"
+    assert generate_socratic_hint("验证") == "你是如何验证解的正确性的？是否考虑了所有可能的解？"
 
 
 

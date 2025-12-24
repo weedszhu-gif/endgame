@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 # 导入服务层
-from services.socratic_hint import generate_socratic_hint
-from services.ai_service import get_ai_hint
+from services.hint.socratic_hint import generate_socratic_hint
+from services.ai.ai_service import get_ai_hint
 
 router = APIRouter(prefix="/api", tags=["math-challenge"])
 

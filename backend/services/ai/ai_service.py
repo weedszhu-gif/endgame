@@ -1,18 +1,11 @@
-from dotenv import load_dotenv
 import os
 import logging
+from config import settings
 from .model_client import ModelClient, ModelType
-
-# 加载环境变量
-load_dotenv()
 
 # 配置日志
 logger = logging.getLogger(__name__)
 
-# 获取环境变量配置
-AI_MODEL_TYPE = os.getenv("AI_MODEL_TYPE", "openai")  # 模型类型：openai, doubao, ernie, qwen, hunyuan
-AI_TEMPERATURE = float(os.getenv("AI_TEMPERATURE", "0.7"))
-AI_MAX_TOKENS = int(os.getenv("AI_MAX_TOKENS", "100"))
 
 async def get_ai_hint(step_content: str, max_retries: int = 3) -> str:
     """
@@ -41,7 +34,7 @@ async def get_ai_hint(step_content: str, max_retries: int = 3) -> str:
     for attempt in range(max_retries):
         try:
             # 根据环境变量选择模型类型
-            model_type = ModelType(AI_MODEL_TYPE.lower())
+            model_type = ModelType(settings.ai_model_type.lower())
             
             # 创建模型客户端
             client = ModelClient(
@@ -55,8 +48,8 @@ async def get_ai_hint(step_content: str, max_retries: int = 3) -> str:
             hint = client.generate(
                 prompt=user_prompt,
                 system_prompt=system_prompt,
-                temperature=AI_TEMPERATURE,
-                max_tokens=AI_MAX_TOKENS
+                temperature=settings.ai_temperature,
+                max_tokens=settings.ai_max_tokens
             )
             
             return hint
@@ -70,6 +63,7 @@ async def get_ai_hint(step_content: str, max_retries: int = 3) -> str:
                 time.sleep(retry_delay)
             else:
                 raise Exception(f"获取AI提示失败: {str(e)}")
+
 
 async def analyze_solution(solution_steps: list, max_retries: int = 3) -> dict:
     """
@@ -103,7 +97,7 @@ async def analyze_solution(solution_steps: list, max_retries: int = 3) -> dict:
     for attempt in range(max_retries):
         try:
             # 根据环境变量选择模型类型
-            model_type = ModelType(AI_MODEL_TYPE.lower())
+            model_type = ModelType(settings.ai_model_type.lower())
             
             # 创建模型客户端
             client = ModelClient(
@@ -117,7 +111,7 @@ async def analyze_solution(solution_steps: list, max_retries: int = 3) -> dict:
             analysis = client.generate(
                 prompt=user_prompt,
                 system_prompt=system_prompt,
-                temperature=AI_TEMPERATURE,
+                temperature=settings.ai_temperature,
                 max_tokens=200
             )
             

@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import os
 import logging
 
 # 配置日志
@@ -11,26 +9,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# 导入配置
+from config.settings import Settings
+
 # 导入路由
-from api import websocket
-
-# 加载环境变量
-load_dotenv()
-
-# 环境变量配置
-class Settings:
-    def __init__(self):
-        # 服务器配置
-        self.host = os.getenv("HOST", "0.0.0.0")
-        self.port = int(os.getenv("PORT", "8000"))
-        self.debug = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
-        
-        # CORS配置
-        allow_origins = os.getenv("ALLOW_ORIGINS", "*")
-        if isinstance(allow_origins, str):
-            self.allow_origins = [origin.strip() for origin in allow_origins.split(",")]
-        else:
-            self.allow_origins = ["*"]
+from api.endpoints.endpoints import router as api_router
+from api.websocket.websocket import websocket_endpoint
 
 # 创建配置实例
 settings = Settings()
@@ -54,13 +38,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 注册WebSocket路由
-app.add_api_websocket_route("/ws", websocket.websocket_endpoint)
+# 注册API路由
+app.include_router(api_router)
 
-# 健康检查端点
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "message": "服务正常运行"}
+# 注册WebSocket路由
+app.add_api_websocket_route("/ws", websocket_endpoint)
 
 # 根路径
 @app.get("/")

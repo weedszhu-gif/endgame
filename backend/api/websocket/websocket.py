@@ -7,8 +7,9 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 # 导入服务层
-from services.socratic_hint import generate_socratic_hint
-from services.ai_service import get_ai_hint
+from services.hint.socratic_hint import generate_socratic_hint
+from services.ai.ai_service import get_ai_hint
+from services.conversation.connection_manager import ConnectionManager
 
 # WebSocket消息模型
 class WebSocketMessage(BaseModel):
@@ -27,56 +28,6 @@ class ErrorReportMessage(WebSocketMessage):
 class PingMessage(WebSocketMessage):
     type: str = "ping"
     content: Optional[str] = None
-
-class ConnectionManager:
-    """WebSocket连接管理器"""
-    
-    def __init__(self):
-        self.active_connections: Dict[str, WebSocket] = {}
-        self.last_ping: Dict[str, float] = {}
-    
-    async def connect(self, websocket: WebSocket, client_id: str = None):
-        """建立新的WebSocket连接"""
-        await websocket.accept()
-        if client_id is None:
-            client_id = str(id(websocket))
-        self.active_connections[client_id] = websocket
-        self.last_ping[client_id] = 0
-        return client_id
-    
-    def disconnect(self, client_id: str):
-        """断开WebSocket连接"""
-        if client_id in self.active_connections:
-            del self.active_connections[client_id]
-        if client_id in self.last_ping:
-            del self.last_ping[client_id]
-    
-    async def send_personal_message(self, message: dict, client_id: str):
-        """向特定客户端发送消息"""
-        if client_id in self.active_connections:
-            await self.active_connections[client_id].send_json(message)
-    
-    async def broadcast(self, message: dict):
-        """向所有连接的客户端广播消息"""
-        for connection in self.active_connections.values():
-            await connection.send_json(message)
-    
-    def update_ping(self, client_id: str):
-        """更新客户端的最后心跳时间"""
-        if client_id in self.last_ping:
-            self.last_ping[client_id] = 0
-    
-    def check_timeouts(self, timeout: int = 30):
-        """检查客户端连接超时，返回超时的客户端ID列表"""
-        import time
-        current_time = time.time()
-        timed_out = []
-        
-        for client_id, last_ping_time in self.last_ping.items():
-            if current_time - last_ping_time > timeout:
-                timed_out.append(client_id)
-        
-        return timed_out
 
 # 创建连接管理器实例
 manager = ConnectionManager()
