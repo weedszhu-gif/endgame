@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
@@ -11,10 +11,6 @@ logger = logging.getLogger(__name__)
 
 # 导入配置
 from config.settings import Settings
-
-# 导入路由
-from api.endpoints.endpoints import router as api_router
-from api.websocket.websocket import websocket_endpoint
 
 # 创建配置实例
 settings = Settings()
@@ -39,10 +35,12 @@ app.add_middleware(
 )
 
 # 注册API路由
+from api.endpoints.endpoints import router as api_router
 app.include_router(api_router)
 
 # 注册WebSocket路由
-app.add_api_websocket_route("/ws", websocket_endpoint)
+from api.websocket.websocket import websocket_endpoint
+app.websocket("/ws")(websocket_endpoint)
 
 # 根路径
 @app.get("/")
