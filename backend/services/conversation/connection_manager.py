@@ -55,7 +55,14 @@ class ConnectionManager:
             client_id: 客户端ID
         """
         if client_id in self.active_connections:
-            await self.active_connections[client_id].send_json(message)
+            try:
+                connection = self.active_connections[client_id]
+                # 直接尝试发送消息，通过异常处理处理连接关闭情况
+                await connection.send_json(message)
+            except (RuntimeError, ConnectionResetError, AttributeError) as e:
+                # 连接已关闭或出现其他错误，移除该连接
+                logger.warning(f"向客户端 {client_id} 发送消息失败: {e}")
+                self.disconnect(client_id)
     
     async def broadcast(self, message: dict) -> None:
         """
@@ -64,8 +71,16 @@ class ConnectionManager:
         Args:
             message: 消息内容
         """
-        for connection in self.active_connections.values():
-            await connection.send_json(message)
+        # 创建一个副本，避免在迭代过程中修改字典
+        connections_copy = list(self.active_connections.items())
+        for client_id, connection in connections_copy:
+            try:
+                # 直接尝试发送消息，通过异常处理处理连接关闭情况
+                await connection.send_json(message)
+            except (RuntimeError, ConnectionResetError, AttributeError) as e:
+                # 连接已关闭或出现其他错误，移除该连接
+                logger.warning(f"向客户端 {client_id} 广播消息失败: {e}")
+                self.disconnect(client_id)
     
     def update_ping(self, client_id: str) -> None:
         """
