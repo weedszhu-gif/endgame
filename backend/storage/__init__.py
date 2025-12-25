@@ -1,3 +1,3 @@
-from .storage_service import StorageService
+# Storage 模块已移除，相关功能已迁移到 endpoints.py
 
-__all__ = ["StorageService"]
+__all__ = []

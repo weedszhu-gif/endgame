@@ -41,22 +41,75 @@
     mask-composite: subtract;
 }
 
-.difficulty-beginner {
-    background: linear-gradient(145deg, #90EE90, #7FDD7F);
-    border-color: #228B22;
-    color: #006400;
+/* 圆形等级图标样式 */
+.level-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    line-height: 1.2;
+    padding: 8px;
+    box-sizing: border-box;
 }
 
-.difficulty-intermediate {
-    background: linear-gradient(145deg, #FFB347, #FF8C00);
-    border-color: #FF6347;
-    color: #8B0000;
+.level-circle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.difficulty-advanced {
-    background: linear-gradient(145deg, #FF6B6B, #DC143C);
-    border-color: #8B0000;
-    color: #FFF;
+.level-circle.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.level-circle.difficulty-beginner {
+    background: #4CAF50 !important;
+    color: #FFFFFF !important;
+    border: 3px solid #2E7D32 !important;
+}
+
+.level-circle.difficulty-beginner:hover {
+    background: #66BB6A !important;
+}
+
+.level-circle.difficulty-beginner.selected {
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.level-circle.difficulty-intermediate {
+    background: #FF9800 !important;
+    color: #FFFFFF !important;
+    border: 3px solid #F57C00 !important;
+}
+
+.level-circle.difficulty-intermediate:hover {
+    background: #FFB74D !important;
+}
+
+.level-circle.difficulty-intermediate.selected {
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.level-circle.difficulty-advanced {
+    background: #F44336 !important;
+    color: #FFFFFF !important;
+    border: 3px solid #C62828 !important;
+}
+
+.level-circle.difficulty-advanced:hover {
+    background: #EF5350 !important;
+}
+
+.level-circle.difficulty-advanced.selected {
+    box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .knowledge-card {
@@ -82,12 +135,19 @@
 }
 
 @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
 .simple-pattern {
-    background-image: 
+    background-image:
         radial-gradient(circle at 50% 50%, rgba(218, 165, 32, 0.05) 2px, transparent 2px);
     background-size: 100px 100px;
     opacity: 0.3;
@@ -96,4 +156,3 @@
 .title-glow {
     text-shadow: 0 0 20px rgba(218, 165, 32, 0.5);
 }
-

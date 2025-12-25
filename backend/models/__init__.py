@@ -1,14 +1,22 @@
 from .base import Base, engine, get_db, SessionLocal
-from .models import User, Problem, LearningSession, SessionStep, Hint
+from .models import (
+    Question,
+    QuestionTag,
+    QuestionType,
+    HintRule,
+    AnswerRecord,
+    StudentAnalysis,
+)
 
 __all__ = [
     "Base",
     "engine",
     "get_db",
     "SessionLocal",
-    "User",
-    "Problem",
-    "LearningSession",
-    "SessionStep",
-    "Hint"
+    "Question",
+    "QuestionTag",
+    "QuestionType",
+    "HintRule",
+    "AnswerRecord",
+    "StudentAnalysis",
 ]
