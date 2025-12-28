@@ -111,6 +111,15 @@ export class WebSocketService {
       case 'history':
         this.emit('history', data)
         break
+      case 'hint':
+        this.emit('hint', data)
+        break
+      case 'pong':
+        this.emit('pong', data)
+        break
+      case 'acknowledge':
+        this.emit('acknowledge', data)
+        break
       default:
         console.warn('未知的消息类型:', type)
         this.emit('message', data)
@@ -127,11 +136,29 @@ export class WebSocketService {
     }
 
     try {
-      const data = {
-        type,
-        message: typeof message === 'string' ? message : JSON.stringify(message),
-        ...(typeof message === 'object' ? message : {})
+      let content = ''
+      const data = { type }
+
+      if (typeof message === 'string') {
+        content = message
+      } else if (typeof message === 'object' && message !== null) {
+        // 如果对象中有content字段，使用它；否则将整个对象转为JSON字符串
+        if ('content' in message) {
+          content = message.content
+          // 复制其他字段到data
+          Object.keys(message).forEach(key => {
+            if (key !== 'content') {
+              data[key] = message[key]
+            }
+          })
+        } else {
+          content = JSON.stringify(message)
+        }
+      } else {
+        content = String(message || '')
       }
+
+      data.content = content
       this.ws.send(JSON.stringify(data))
       return true
     } catch (error) {
@@ -145,7 +172,7 @@ export class WebSocketService {
    */
   sendChatMessage(userInput, question) {
     const prompt = this.buildHintPrompt(question, userInput)
-    return this.send('chat', prompt)
+    return this.send('step', prompt)
   }
 
   /**

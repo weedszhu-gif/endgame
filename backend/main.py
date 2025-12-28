@@ -25,10 +25,11 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
-# 配置CORS
+# 配置CORS - 允许所有来源（开发环境）
+# 生产环境应该限制为特定域名
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allow_origins,
+    allow_origins=["*"],  # 开发环境允许所有来源，生产环境应限制
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

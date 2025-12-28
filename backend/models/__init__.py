@@ -4,8 +4,10 @@ from .models import (
     QuestionTag,
     QuestionType,
     HintRule,
+    User,
     AnswerRecord,
     StudentAnalysis,
+    HintFeedback,
 )
 
 __all__ = [
@@ -17,6 +19,8 @@ __all__ = [
     "QuestionTag",
     "QuestionType",
     "HintRule",
+    "User",
     "AnswerRecord",
     "StudentAnalysis",
+    "HintFeedback",
 ]

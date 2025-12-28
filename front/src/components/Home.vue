@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-[#FAF9F6] relative overflow-x-hidden">
+  <div class="bg-[#FAF9F6] relative overflow-x-hidden">
     <!-- 主容器 -->
-    <div class="relative z-10 min-h-screen flex flex-col">
+    <div class="relative z-10 flex flex-col min-h-[calc(100vh-48px)]">
       <!-- 头部 -->
-      <header class="text-center py-8 px-4">
+      <header class="text-center py-6 px-4">
         <div class="inline-flex items-center justify-center mb-4">
           <i class="fas fa-th text-2xl text-amber-800 mr-3"></i>
           <h1 class="text-4xl md:text-5xl font-bold text-amber-900">数学残局挑战</h1>
@@ -14,6 +14,24 @@
           <i class="fas fa-chess-pawn text-sm"></i>
           <span class="text-sm">智慧如棋，步步为营</span>
           <i class="fas fa-trophy text-sm"></i>
+        </div>
+        
+        <!-- 导航按钮 -->
+        <div class="flex justify-center items-center gap-4 mt-4">
+          <button
+            @click="goToRecords"
+            class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md flex items-center gap-2"
+          >
+            <i class="fas fa-history"></i>
+            <span>答题记录</span>
+          </button>
+          <button
+            @click="goToAnalysis"
+            class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md flex items-center gap-2"
+          >
+            <i class="fas fa-chart-line"></i>
+            <span>学习分析</span>
+          </button>
         </div>
       </header>
 
@@ -120,7 +138,7 @@
     <!-- 操作提示 -->
     <div 
       ref="hintRef"
-      class="fixed top-4 right-4 bg-yellow-50 border-2 border-amber-200 rounded-lg p-3 shadow-md transition-all duration-500 opacity-90 max-w-xs"
+      class="fixed top-16 left-4 bg-yellow-50 border-2 border-amber-200 rounded-lg p-3 shadow-md transition-all duration-500 opacity-90 max-w-xs z-50"
     >
       <div class="flex items-center">
         <i :class="hintIcon" class="mr-2"></i>
@@ -131,11 +149,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { gsap } from 'gsap'
+import { useUser } from '../composables/useUser'
 
 const router = useRouter()
+const { currentUser } = useUser()
 
 const selectedLevel = ref('')
 const hintRef = ref(null)
@@ -202,6 +222,16 @@ const selectLevel = async (level) => {
 const selectTag = (tag) => {
   if (!selectedLevel.value) return
   
+  // 检查是否已选择用户
+  if (!currentUser.value) {
+    updateHint(
+      '请先选择用户再开始答题',
+      'fas fa-exclamation-circle text-red-600',
+      '#FEF2F2'
+    )
+    return
+  }
+  
   updateHint(
     `已选择${tag}，正在加载题目...`,
     'fas fa-play-circle text-blue-600',
@@ -218,6 +248,14 @@ const selectTag = (tag) => {
       }
     })
   }, 500)
+}
+
+const goToRecords = () => {
+  router.push('/records')
+}
+
+const goToAnalysis = () => {
+  router.push('/analysis')
 }
 
 const updateHint = (text, icon, bgColor) => {

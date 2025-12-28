@@ -223,7 +223,7 @@ npm run dev
 ### AI 响应异常
 
 1. **检查后端配置**
-   - 确认 `back/plugins/mlops.py` 中的 AI 模型配置正确
+   - 确认环境变量中的 AI 模型配置正确（DOUBAO_API_KEY 等）
    - 查看后端日志中的错误信息
 
 2. **检查提示词格式**

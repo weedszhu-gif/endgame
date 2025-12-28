@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../components/Home.vue'
 import Answer from '../components/Answer.vue'
 import Analysis from '../components/Analysis.vue'
+import Records from '../components/Records.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/analysis',
     name: 'Analysis',
     component: Analysis
+  },
+  {
+    path: '/records',
+    name: 'Records',
+    component: Records
   }
 ]
 
